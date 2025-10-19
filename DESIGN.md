@@ -12,7 +12,7 @@
 - **爬虫服务 (Playwright)**: 一个负责从外部网站抓取岗位数据的模块。其设计具有良好的扩展性，能够支持多个招聘网站。
 - **数据库 (MySQL)**: 持久化层，用于存储岗位列表、用户信息和生成的个人画像。
 - **LLM 服务 (外部)**: 外部的 AI 服务（如 Google Gemini），用于自然语言理解、数据提取和智能匹配。
-- **前端 (Web UI)**: 面向用户的交互界面，用于上传信息和查看工作推荐。（将在后续阶段开发）。
+- **前端 (React Web UI)**: 一个基于 React 和 Ant Design 的、用户可交互的操作界面，用于管理和展示数据。
 
 ### 组件交互流程
 
@@ -33,7 +33,8 @@
     - `GET /api/v1/scrape/status/{job_id}`: 检查爬虫任务的状态。
     - `POST /api/v1/profile/upload`: 上传简历文件进行分析。
     - `POST /api/v1/profile/analyze`: 提交文本进行分析。
-    - `GET /api/v1/jobs/`: 搜索和筛选岗位信息。
+    - `GET /api/v1/jobs/`: 获取（可分页、筛选、排序的）岗位列表。
+    - `GET /api/v1/scrape/status/{job_id}`: Check the status of a scraping job.
     - `GET /api/v1/recommendations/`: 获取用户的个性化岗位推荐。
 
 ## 4. 爬虫模块设计

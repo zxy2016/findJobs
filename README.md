@@ -11,6 +11,7 @@
 ## 技术栈
 
 - **后端**: Python, FastAPI
+- **前端**: React, Ant Design
 - **Web爬虫**: Playwright
 - **数据库**: MySQL with SQLAlchemy
 - **配置管理**: Pydantic & .env 文件
@@ -65,11 +66,19 @@
 
 ## 运行应用
 
-1.  **启动 FastAPI 服务**
+1.  **启动后端 FastAPI 服务**
     ```bash
     uvicorn app.main:app --reload
     ```
-2.  应用将在 `http://127.0.0.1:8000` 上可用。
+    后端服务将在 `http://127.0.0.1:8000` 上可用。
+
+2.  **启动前端 React 应用**
+    在**新的终端窗口**中，进入 `frontend` 目录并运行：
+    ```bash
+    cd frontend
+    npm start
+    ```
+    前端应用将在 `http://localhost:3000` 上可用，并会自动打开浏览器。
 
 ## 开发路线图
 
