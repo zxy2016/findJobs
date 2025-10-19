@@ -25,7 +25,9 @@ class Job(BaseModel):
     class Config:
         orm_mode = True # 允许从 ORM 对象（SQLAlchemy 模型）转换
 
-# API 响应的整体模型，包含分页信息
+# API 响应的整体模型，包含分页信息和动态筛选选项
 class JobPage(BaseModel):
     total: int
     items: List[Job]
+    available_locations: List[str]
+    available_categories: List[str]

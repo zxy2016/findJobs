@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Table, Input, Space, Alert, Drawer, Descriptions, Tag, Select, Radio, Form, Row, Col, Button } from 'antd';
-import { getJobs, getLocations, getCategories } from '../api/jobsApi';
+import { getJobs } from '../api/jobsApi';
 import ResizableTitle from '../components/ResizableTitle';
 
 const { Search } = Input;
@@ -30,16 +30,7 @@ const JobsManagement = () => {
     const [drawerVisible, setDrawerVisible] = useState(false);
     const [selectedJob, setSelectedJob] = useState(null);
 
-    useEffect(() => {
-        const fetchOptions = async () => {
-            try {
-                const [locs, cats] = await Promise.all([getLocations(), getCategories()]);
-                setLocations(locs.data);
-                setCategories(cats.data);
-            } catch (err) { console.error("获取筛选选项失败", err); }
-        };
-        fetchOptions();
-    }, []);
+
 
     const fetchJobsData = useCallback(async (params) => {
         setLoading(true);
@@ -48,6 +39,9 @@ const JobsManagement = () => {
             const response = await getJobs(params);
             setJobs(response.data.items);
             setTotal(response.data.total);
+            // 用返回的动态选项更新筛选框
+            setLocations(response.data.available_locations);
+            setCategories(response.data.available_categories);
         } catch (err) { setError('获取岗位数据失败，请稍后重试。'); }
         setLoading(false);
     }, []);

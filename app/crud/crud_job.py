@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import desc, asc
+from sqlalchemy import desc, asc, func
 from app.models.job import Job
 from typing import Optional
 
@@ -18,52 +18,75 @@ def get_multi(
 ):
     """
     获取职位列表，支持分页、排序和筛选。
+    为每个筛选器动态生成其独立的可用选项列表。
     """
-    query = db.query(Job)
-
-    # 筛选逻辑
-    if is_active is not None:
-        query = query.filter(Job.is_active == is_active)
     
-    if location:
-        query = query.filter(Job.location == location) # 精确匹配
-    
-    if category:
-        query = query.filter(Job.description == category) # 精确匹配
+    # --- 基础查询构建函数 ---
+    def build_base_query(exclude_filter: Optional[str] = None):
+        query = db.query(Job)
+        if is_active is not None:
+            query = query.filter(Job.is_active == is_active)
+        
+        if location and exclude_filter != 'location':
+            query = query.filter(Job.location == location)
+        
+        if category and exclude_filter != 'category':
+            query = query.filter(Job.description == category)
 
-    if published_days:
-        from datetime import datetime, timedelta
-        since_date = datetime.utcnow() - timedelta(days=published_days)
-        # 假设 published_at 是字符串，需要转换
-        query = query.filter(Job.published_at >= str(since_date.date()))
+        if published_days:
+            from datetime import datetime, timedelta
+            since_date = datetime.utcnow() - timedelta(days=published_days)
+            query = query.filter(Job.published_at >= str(since_date.date()))
 
-    if keyword:
-        # 支持对多个字段进行模糊搜索
-        search_keyword = f"%{keyword}%"
-        query = query.filter(
-            (
-                Job.title.ilike(search_keyword) |
-                Job.description.ilike(search_keyword) |
-                Job.job_responsibilities.ilike(search_keyword) |
-                Job.job_requirements.ilike(search_keyword) |
-                Job.department_info.ilike(search_keyword) # 新增部门信息搜索
+        if keyword:
+            search_keyword = f"%{keyword}%"
+            query = query.filter(
+                (
+                    Job.title.ilike(search_keyword) |
+                    Job.description.ilike(search_keyword) |
+                    Job.job_responsibilities.ilike(search_keyword) |
+                    Job.job_requirements.ilike(search_keyword) |
+                    Job.department_info.ilike(search_keyword)
+                )
             )
-        )
+        return query
 
-    total = query.count()
+    # --- 1. 获取动态筛选选项 ---
+
+    # 获取可用的地点 (排除地点自身筛选)
+    locations_query = build_base_query(exclude_filter='location')
+    available_locations_result = locations_query.with_entities(Job.location).distinct().all()
+    available_locations = [loc[0] for loc in available_locations_result if loc[0]]
+
+    # 获取可用的职能类别 (排除职能类别自身筛选)
+    categories_query = build_base_query(exclude_filter='category')
+    available_categories_result = categories_query.with_entities(Job.description).distinct().all()
+    available_categories = [cat[0] for cat in available_categories_result if cat[0]]
+
+    # --- 2. 获取最终的职位列表 ---
+    
+    # 应用所有筛选条件
+    final_query = build_base_query()
+    
+    total = final_query.count()
 
     # 排序逻辑
     if sort_by and hasattr(Job, sort_by):
         order_column = getattr(Job, sort_by)
         if sort_order == 'asc':
-            query = query.order_by(asc(order_column))
+            final_query = final_query.order_by(asc(order_column))
         else:
-            query = query.order_by(desc(order_column))
+            final_query = final_query.order_by(desc(order_column))
     else:
         # 默认按发布/更新时间排序
-        query = query.order_by(desc(Job.published_at))
+        final_query = final_query.order_by(desc(Job.published_at))
 
     # 分页逻辑
-    jobs = query.offset(skip).limit(limit).all()
+    jobs = final_query.offset(skip).limit(limit).all()
 
-    return {"total": total, "items": jobs}
+    return {
+        "total": total, 
+        "items": jobs,
+        "available_locations": available_locations,
+        "available_categories": available_categories
+    }
