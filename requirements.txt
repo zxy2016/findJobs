@@ -1,0 +1,8 @@
+fastapi
+uvicorn[standard]
+playwright
+python-dotenv
+sqlalchemy
+mysqlclient
+mysql-connector-python
+pydantic-settings
