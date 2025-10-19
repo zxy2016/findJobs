@@ -83,3 +83,4 @@ dmypy.json
 
 # Mac
 .DS_Store
+\n# Test databases\n*.db
