@@ -13,9 +13,10 @@ class Settings(BaseSettings):
     DB_NAME: str = os.getenv("DB_NAME", "find_jobs")
 
     # LLM settings
-    LLM_PROVIDER: str = os.getenv("LLM_PROVIDER", "gemini")
+    LLM_PROVIDER: str = os.getenv("LLM_PROVIDER", "google")
+    LLM_MODEL_NAME: str = os.getenv("LLM_MODEL_NAME", "gemini-1.5-pro-latest")
     LLM_API_KEY: str = os.getenv("LLM_API_KEY")
-    LLM_API_BASE: str | None = os.getenv("LLM_API_BASE")
+    LLM_API_BASE_URL: str | None = os.getenv("LLM_API_BASE_URL")
 
     class Config:
         env_file = ".env"

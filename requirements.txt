@@ -6,3 +6,6 @@ sqlalchemy
 mysqlclient
 mysql-connector-python
 pydantic-settings
+httpx
+pypdf
+python-docx

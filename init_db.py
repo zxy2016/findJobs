@@ -78,10 +78,8 @@ try:
     import app.models # 确保模型被注册
 
     print("Connecting to the database and creating tables...")
-    # 先删除旧表，再创建新表，确保开发阶段的表结构更新
-    with engine.connect() as connection:
-        connection.execute(text("DROP TABLE IF EXISTS jobs"))
-        print("Dropped existing 'jobs' table (if it existed).")
+    # Base.metadata.create_all 会安全地创建所有不存在的表
+    # 它不会修改或删除任何现有的表
     Base.metadata.create_all(bind=engine)
     print("Tables created successfully!")
 except Exception as e:

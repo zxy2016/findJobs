@@ -59,6 +59,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+.gitignore
 
 # Spyder project settings
 .spyderproject
@@ -84,3 +85,7 @@ dmypy.json
 # Mac
 .DS_Store
 \n# Test databases\n*.db
+
+#ai
+gemini.md
+claude.md
