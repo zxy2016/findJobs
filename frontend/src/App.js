@@ -1,11 +1,12 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { Layout, Menu, App as AntApp } from 'antd';
-import { DatabaseOutlined, PartitionOutlined, UserOutlined } from '@ant-design/icons';
+import { DatabaseOutlined, PartitionOutlined, UserOutlined, AimOutlined } from '@ant-design/icons';
 
 import JobsManagement from './pages/JobsManagement';
 import CrawlerManagement from './pages/CrawlerManagement';
 import ProfileAnalysis from './pages/ProfileAnalysis';
+import Recommendations from './pages/Recommendations';
 
 const { Header, Content, Sider } = Layout;
 
@@ -27,6 +28,9 @@ const App = () => {
                         <Menu.Item key="/profile" icon={<UserOutlined />}>
                             <Link to="/profile">个人分析</Link>
                         </Menu.Item>
+                        <Menu.Item key="/recommendations" icon={<AimOutlined />}>
+                            <Link to="/recommendations">岗位推荐</Link>
+                        </Menu.Item>
                     </Menu>
                 </Sider>
                 <Layout className="site-layout">
@@ -37,6 +41,7 @@ const App = () => {
                                 <Route path="/jobs" element={<JobsManagement />} />
                                 <Route path="/crawlers" element={<CrawlerManagement />} />
                                 <Route path="/profile" element={<ProfileAnalysis />} />
+                                <Route path="/recommendations" element={<Recommendations />} />
                                 <Route path="/" element={<JobsManagement />} /> {/* 默认页面为岗位管理 */}
                             </Routes>
                         </div>

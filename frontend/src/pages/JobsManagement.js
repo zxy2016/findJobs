@@ -106,7 +106,34 @@ const JobsManagement = () => {
                 onRow={(record) => ({ onClick: () => showDrawer(record) })}
             />
             <Drawer width={640} placement="right" closable={true} onClose={() => setDrawerVisible(false)} open={drawerVisible} title={selectedJob?.title}>
-                {selectedJob && <Descriptions bordered column={1} size="small">{/* ... 详情 ... */}</Descriptions>}
+                {selectedJob && (
+                    <Descriptions bordered column={1} size="small">
+                        <Descriptions.Item label="职位名称">{selectedJob.title}</Descriptions.Item>
+                        <Descriptions.Item label="公司">{selectedJob.company}</Descriptions.Item>
+                        <Descriptions.Item label="部门信息">{selectedJob.department_info}</Descriptions.Item>
+                        <Descriptions.Item label="来源网站">{selectedJob.source_site}</Descriptions.Item>
+                        <Descriptions.Item label="原始链接">
+                            <a href={selectedJob.url} target="_blank" rel="noopener noreferrer">{selectedJob.url}</a>
+                        </Descriptions.Item>
+                        <Descriptions.Item label="薪资">{selectedJob.salary_info}</Descriptions.Item>
+                        <Descriptions.Item label="地点">{selectedJob.location}</Descriptions.Item>
+                        <Descriptions.Item label="详细地点">{selectedJob.detailed_location}</Descriptions.Item>
+                        <Descriptions.Item label="经验要求">{selectedJob.experience_required}</Descriptions.Item>
+                        <Descriptions.Item label="学历要求">{selectedJob.education_required}</Descriptions.Item>
+                        <Descriptions.Item label="联系信息">{selectedJob.contact_info}</Descriptions.Item>
+                        <Descriptions.Item label="发布/更新时间">{selectedJob.published_at}</Descriptions.Item>
+                        <Descriptions.Item label="状态">{selectedJob.is_active ? <Tag color="green">在线</Tag> : <Tag color="red">下线</Tag>}</Descriptions.Item>
+                        <Descriptions.Item label="岗位职责">
+                            <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>{selectedJob.job_responsibilities}</pre>
+                        </Descriptions.Item>
+                        <Descriptions.Item label="岗位要求">
+                            <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>{selectedJob.job_requirements}</pre>
+                        </Descriptions.Item>
+                        <Descriptions.Item label="职位描述">
+                            <div dangerouslySetInnerHTML={{ __html: selectedJob.description }} />
+                        </Descriptions.Item>
+                    </Descriptions>
+                )}
             </Drawer>
         </div>
     );

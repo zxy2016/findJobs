@@ -6,7 +6,7 @@ import os
 # 构建数据库连接字符串
 # 使用 mysql+mysqldb 驱动，因为我们在 requirements.txt 中包含了 mysqlclient
 SQLALCHEMY_DATABASE_URL = (
-    f"mysql+mysqldb://{settings.DB_USER}:{settings.DB_PASSWORD}@"
+    f"mysql+mysqlconnector://{settings.DB_USER}:{settings.DB_PASSWORD}@"
     f"{settings.DB_HOST}:{settings.DB_PORT}/{settings.DB_NAME}"
 )
 

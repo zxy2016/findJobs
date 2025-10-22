@@ -3,6 +3,12 @@ from sqlalchemy import desc, asc, func
 from app.models.job import Job
 from typing import Optional
 
+def get(db: Session, *, id: int) -> Optional[Job]:
+    """
+    根据 ID 获取单个职位。
+    """
+    return db.query(Job).filter(Job.id == id).first()
+
 def get_multi(
     db: Session, 
     *, 

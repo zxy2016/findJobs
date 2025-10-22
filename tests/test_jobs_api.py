@@ -97,3 +97,17 @@ def test_read_jobs_filter_by_is_active(setup_database):
     data = response.json()
     assert data["total"] == 1
     assert data["items"][0]["title"] == "Backend Developer (Java)"
+
+def test_read_single_job(setup_database):
+    # 测试获取存在的职位
+    response = client.get("/api/v1/jobs/1")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["title"] == "Python Developer"
+    assert data["id"] == 1
+
+    # 测试获取不存在的职位
+    response = client.get("/api/v1/jobs/999")
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Job not found"
+

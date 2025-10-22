@@ -24,11 +24,6 @@ class GeminiClient(LLMClient):
         print(f"GeminiClient initialized for model {self.model_name}")
 
     async def analyze(self, content: str) -> Dict[str, Any]:
-        headers = {
-            'Content-Type': 'application/json',
-        }
-        
-        # 简化 prompt 字符串，避免潜在的特殊字符问题
         prompt = (
             "请从以下简历文本中，提取关键信息并以JSON格式返回。"
             "确保返回的是一个合法的JSON对象，不要在JSON前后添加任何额外的标记，比如 ```json ... ```。"
@@ -37,7 +32,22 @@ class GeminiClient(LLMClient):
             "\n\n简历文本如下：\n---\n"
             f"{content}\n---"
         )
+        
+        response_text = await self.generate(prompt)
+        
+        # 处理返回文本中可能包含的 markdown 标记
+        if '```json' in response_text:
+            json_str = response_text.split('```json')[1].split('```')[0].strip()
+        else:
+            json_str = response_text
+        
+        return json.loads(json_str)
 
+    async def generate(self, prompt: str) -> str:
+        headers = {
+            'Content-Type': 'application/json',
+        }
+        
         json_data = {
             "contents": [
                 {
@@ -53,25 +63,13 @@ class GeminiClient(LLMClient):
                 response = await client.post(self.api_url, headers=headers, json=json_data, timeout=120.0)
                 response.raise_for_status()
                 
-                # 打印原始响应用于调试
                 raw_response_json = response.json()
-                print(f"--- DEBUG: Raw Gemini API Response JSON ---\n{json.dumps(raw_response_json, indent=2, ensure_ascii=False)}\n---------------------------------")
-
-                # 1. 先解析最外层 JSON，提取 text 字段
-                text_content = raw_response_json['candidates'][0]['content']['parts'][0]['text']
-
-                # 2. 处理 text 字段中可能包含的 markdown 标记
-                if '```json' in text_content:
-                    json_str = text_content.split('```json')[1].split('```')[0].strip()
-                else:
-                    json_str = text_content
                 
-                # 3. 解析最终的 JSON 字符串
-                return json.loads(json_str)
+                text_content = raw_response_json['candidates'][0]['content']['parts'][0]['text']
+                return text_content
 
         except (httpx.HTTPStatusError, KeyError, IndexError, json.JSONDecodeError) as e:
             print(f"调用或解析 Gemini API 失败: {e}")
-            # 在生产环境中，这里应该使用更完善的日志记录
             raise
         except Exception as e:
             print(f"调用 Gemini API 时发生未知错误: {e}")

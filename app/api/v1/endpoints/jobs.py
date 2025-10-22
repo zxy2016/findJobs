@@ -37,3 +37,19 @@ def read_jobs(
         is_active=is_active
     )
     return result
+
+
+@router.get("/jobs/{job_id}", response_model=job_schema.Job)
+def read_job(
+    *, 
+    db: Session = Depends(get_db), 
+    job_id: int
+) -> Any:
+    """
+    获取单个职位的详细信息。
+    """
+    job = crud_job.get(db, id=job_id)
+    if not job:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=404, detail="Job not found")
+    return job

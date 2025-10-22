@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.db.base_class import create_all_tables
 from app.db.session import engine
-from app.api.v1.endpoints import scraper, jobs, profile
+from app.api.v1.endpoints import scraper, jobs, profile, matching
 
 app = FastAPI(
     title="FindJobs AI Assistant",
@@ -33,6 +33,7 @@ async def startup_event():
 app.include_router(scraper.router, prefix="/api/v1", tags=["Scraper"])
 app.include_router(jobs.router, prefix="/api/v1", tags=["Jobs"])
 app.include_router(profile.router, prefix="/api/v1", tags=["Profile"])
+app.include_router(matching.router, prefix="/api/v1", tags=["Matching"])
 
 
 @app.get("/")
